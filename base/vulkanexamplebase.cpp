@@ -665,10 +665,12 @@ void VulkanExampleBase::renderLoop()
 */
 
 void VulkanExampleBase::renderLoop() {
-    for(int i = 0; i <= 100; i++) {  
+    for(int i = 0; i <= 100000; i++) {  
         auto tStart = std::chrono::high_resolution_clock::now();
-		printf("renderLoop: %d, time: %d\n", i, tStart);
-
+		if(i % 1000 == 0) {
+			printf("renderLoop: %d, time: %d\n", i, tStart);
+		}
+	
         // 如果需要更新视图或其他预渲染操作
         if (viewUpdated) {
             viewUpdated = false;  // 根据实际情况重置更新标志
