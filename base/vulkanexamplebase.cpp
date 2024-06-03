@@ -736,35 +736,35 @@ void VulkanExampleBase::drawUI(const VkCommandBuffer commandBuffer)
 
 void VulkanExampleBase::prepareFrame()
 {
-	// Acquire the next image from the swap chain
-	VkResult result = swapChain.acquireNextImage(semaphores.presentComplete, &currentBuffer);
-	// Recreate the swapchain if it's no longer compatible with the surface (OUT_OF_DATE)
-	// SRS - If no longer optimal (VK_SUBOPTIMAL_KHR), wait until submitFrame() in case number of swapchain images will change on resize
-	if ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR)) {
-		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-			windowResize();
-		}
-		return;
-	}
-	else {
-		VK_CHECK_RESULT(result);
-	}
+	// // Acquire the next image from the swap chain
+	// VkResult result = swapChain.acquireNextImage(semaphores.presentComplete, &currentBuffer);
+	// // Recreate the swapchain if it's no longer compatible with the surface (OUT_OF_DATE)
+	// // SRS - If no longer optimal (VK_SUBOPTIMAL_KHR), wait until submitFrame() in case number of swapchain images will change on resize
+	// if ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR)) {
+	// 	if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+	// 		windowResize();
+	// 	}
+	// 	return;
+	// }
+	// else {
+	// 	VK_CHECK_RESULT(result);
+	// }
 }
 
 void VulkanExampleBase::submitFrame()
 {
-	VkResult result = swapChain.queuePresent(queue, currentBuffer, semaphores.renderComplete);
-	// Recreate the swapchain if it's no longer compatible with the surface (OUT_OF_DATE) or no longer optimal for presentation (SUBOPTIMAL)
-	if ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR)) {
-		windowResize();
-		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-			return;
-		}
-	}
-	else {
-		VK_CHECK_RESULT(result);
-	}
-	VK_CHECK_RESULT(vkQueueWaitIdle(queue));
+	// VkResult result = swapChain.queuePresent(queue, currentBuffer, semaphores.renderComplete);
+	// // Recreate the swapchain if it's no longer compatible with the surface (OUT_OF_DATE) or no longer optimal for presentation (SUBOPTIMAL)
+	// if ((result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_SUBOPTIMAL_KHR)) {
+	// 	windowResize();
+	// 	if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+	// 		return;
+	// 	}
+	// }
+	// else {
+	// 	VK_CHECK_RESULT(result);
+	// }
+	// VK_CHECK_RESULT(vkQueueWaitIdle(queue));
 }
 
 VulkanExampleBase::VulkanExampleBase()
