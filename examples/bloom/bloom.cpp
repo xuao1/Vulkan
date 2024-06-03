@@ -693,7 +693,7 @@ public:
 	void draw()
 	{
 		// 将命令缓冲区提交到GPU队列执行，开始绘制过程
-		VulkanExampleBase::prepareFrame();
+		// VulkanExampleBase::prepareFrame();
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &drawCmdBuffers[currentBuffer];
 		VK_CHECK_RESULT(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
