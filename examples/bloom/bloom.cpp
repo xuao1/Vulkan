@@ -11,8 +11,8 @@
 
 
 // Offscreen frame buffer properties
-#define FB_DIM 256
-#define FB_COLOR_FORMAT VK_FORMAT_R8G8B8A8_UNORM
+#define FB_DIM 256			// 帧缓冲区的尺寸
+#define FB_COLOR_FORMAT VK_FORMAT_R8G8B8A8_UNORM	// 帧缓冲区的颜色格式
 
 class VulkanExample : public VulkanExampleBase
 {
@@ -94,6 +94,7 @@ public:
 
 	VulkanExample() : VulkanExampleBase()
 	{
+		// 设置了窗口标题、调整了计时器速度、初始化了摄像机位置和视角
 		title = "Bloom (offscreen rendering)";
 		timerSpeed *= 0.5f;
 		camera.type = Camera::CameraType::lookat;
@@ -148,6 +149,8 @@ public:
 	// The color attachment of this framebuffer will then be sampled from
 	void prepareOffscreenFramebuffer(FrameBuffer *frameBuf, VkFormat colorFormat, VkFormat depthFormat)
 	{
+		// 设置离屏渲染帧缓冲区
+		// 函数的主要任务是为离屏渲染配置颜色附件和深度模板附件，并创建相应的图像视图和帧缓冲对象
 		// Color attachment
 		VkImageCreateInfo image = vks::initializers::imageCreateInfo();
 		image.imageType = VK_IMAGE_TYPE_2D;
@@ -329,6 +332,8 @@ public:
 
 	void buildCommandBuffers()
 	{
+		// 为垂直和水平模糊效果准备离屏帧缓冲区
+		// 代码中包括了设置离屏渲染环境的多个关键步骤：确定合适的深度格式、创建渲染通道、配置附件描述、子通道和子通道依赖关系，以及创建采样器和帧缓冲
 		VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
 
 		VkClearValue clearValues[2];
@@ -452,6 +457,7 @@ public:
 
 	void loadAssets()
 	{
+		// 加载 3D 模型和纹理资源
 		const uint32_t glTFLoadingFlags = vkglTF::FileLoadingFlags::PreTransformVertices | vkglTF::FileLoadingFlags::PreMultiplyVertexColors | vkglTF::FileLoadingFlags::FlipY;
 		models.ufo.loadFromFile(getAssetPath() + "models/retroufo.gltf", vulkanDevice, queue, glTFLoadingFlags);
 		models.ufoGlow.loadFromFile(getAssetPath() + "models/retroufo_glow.gltf", vulkanDevice, queue, glTFLoadingFlags);
@@ -461,6 +467,8 @@ public:
 
 	void setupDescriptors()
 	{
+		// 设置 Vulkan 的描述符集
+		// 这是 Vulkan 中用于让着色器访问资源（如统一缓冲区和纹理）的一种机制
 		// Pool
 		std::vector<VkDescriptorPoolSize> poolSizes = {
 			vks::initializers::descriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 8),
@@ -532,6 +540,7 @@ public:
 
 	void preparePipelines()
 	{
+		// 定义了一系列图形管线（graphics pipelines）的设置
 		// Layouts
 		VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = vks::initializers::pipelineLayoutCreateInfo(&descriptorSetLayouts.blur, 1);
 		VK_CHECK_RESULT(vkCreatePipelineLayout(device, &pipelineLayoutCreateInfo, nullptr, &pipelineLayouts.blur));
@@ -621,6 +630,7 @@ public:
 	// Prepare and initialize uniform buffer containing shader uniforms
 	void prepareUniformBuffers()
 	{
+		// 统一缓冲区在Vulkan中用于存储可以在渲染过程中由多个着色器阶段访问的统一数据（如变换矩阵、灯光参数等）
 		// Phong and color pass vertex shader uniform buffer
 		VK_CHECK_RESULT(vulkanDevice->createBuffer(
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -676,32 +686,35 @@ public:
 	// Update blur pass parameter uniform buffer
 	void updateUniformBuffersBlur()
 	{
+		// 这个函数负责将模糊效果的参数从CPU侧的结构体复制到映射的GPU统一缓冲区内存
 		memcpy(uniformBuffers.blurParams.mapped, &ubos.blurParams, sizeof(ubos.blurParams));
 	}
 
 	void draw()
 	{
-		VulkanExampleBase::prepareFrame();
+		// 将命令缓冲区提交到GPU队列执行，开始绘制过程
+		// VulkanExampleBase::prepareFrame();
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &drawCmdBuffers[currentBuffer];
 		VK_CHECK_RESULT(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-		VulkanExampleBase::submitFrame();
+		// VulkanExampleBase::submitFrame(); 
 	}
 
 	void prepare()
 	{
 		VulkanExampleBase::prepare();
-		loadAssets();
-		prepareUniformBuffers();
-		prepareOffscreen();
-		setupDescriptors();
-		preparePipelines();
-		buildCommandBuffers();
+		loadAssets(); 				// 加载图形资源如模型和纹理
+		prepareUniformBuffers();	// 创建并初始化统一缓冲区
+		prepareOffscreen();			// 准备离屏渲染相关的资源和设置
+		setupDescriptors();			// 配置描述符集
+		preparePipelines();			// 创建图形管线
+		buildCommandBuffers();		// 构建命令缓冲区
 		prepared = true;
 	}
 
 	virtual void render()
 	{
+		// 这个函数控制渲染的主循环。它首先检查是否完成了初始化，然后执行绘制操作，最后根据需要更新场景的统一缓冲区
 		if (!prepared)
 			return;
 		draw();
@@ -713,6 +726,7 @@ public:
 
 	virtual void OnUpdateUIOverlay(vks::UIOverlay *overlay)
 	{
+		// 这个函数用于更新UI覆盖层，允许用户通过UI交互修改渲染设置
 		if (overlay->header("Settings")) {
 			if (overlay->checkBox("Bloom", &bloom)) {
 				buildCommandBuffers();
