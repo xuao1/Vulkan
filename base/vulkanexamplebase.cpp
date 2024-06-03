@@ -668,7 +668,7 @@ void VulkanExampleBase::renderLoop() {
     for(int i = 0; i <= 100000; i++) {  
         auto tStart = std::chrono::high_resolution_clock::now();
 		if(i % 1000 == 0) {
-			printf("renderLoop: %d, time: %d\n", i, tStart);
+			printf("renderLoop: %d, time: %d\n", i, std::chrono::duration<double, std::milli>(tStart - lastTimestamp).count());
 		}
 	
         // 如果需要更新视图或其他预渲染操作
