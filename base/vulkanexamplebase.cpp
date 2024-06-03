@@ -291,6 +291,7 @@ void VulkanExampleBase::nextFrame()
 	updateOverlay();
 }
 
+/*
 void VulkanExampleBase::renderLoop()
 {
 // SRS - for non-apple plaforms, handle benchmarking here within VulkanExampleBase::renderLoop()
@@ -661,6 +662,47 @@ void VulkanExampleBase::renderLoop()
 		vkDeviceWaitIdle(device);
 	}
 }
+*/
+
+void VulkanExampleBase::renderLoop() {
+    for(int i = 0; i <= 100; i++) {  
+        auto tStart = std::chrono::high_resolution_clock::now();
+
+        // 如果需要更新视图或其他预渲染操作
+        if (viewUpdated) {
+            viewUpdated = false;  // 根据实际情况重置更新标志
+        }
+
+        render();  // 执行渲染操作
+
+        frameCounter++;  // 更新帧计数器
+        auto tEnd = std::chrono::high_resolution_clock::now();
+        auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
+        frameTimer = tDiff / 1000.0f;  // 更新帧时间
+
+        // 可选：更新相机或其他动画
+        if (!paused) {
+            timer += timerSpeed * frameTimer;
+            if (timer > 1.0) {
+                timer -= 1.0f;
+            }
+        }
+
+        // 更新性能监控数据，如FPS
+        float fpsTimer = std::chrono::duration<double, std::milli>(tEnd - lastTimestamp).count();
+        if (fpsTimer > 1000.0f) {
+            lastFPS = static_cast<uint32_t>((float)frameCounter * (1000.0f / fpsTimer));
+            frameCounter = 0;
+            lastTimestamp = tEnd;
+        }
+    }
+
+    // 设备空闲时进行清理
+    if (device != VK_NULL_HANDLE) {
+        vkDeviceWaitIdle(device);
+    }
+}
+
 
 void VulkanExampleBase::updateOverlay()
 {
